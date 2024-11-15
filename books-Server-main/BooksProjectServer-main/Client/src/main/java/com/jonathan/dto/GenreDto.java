@@ -8,7 +8,8 @@ import java.util.Set;
 
 public class GenreDto implements Genre {
     private int id;
-    private String description;
+    private String name;  // Nueva propiedad para "name"
+
     @Override
     public int getId() {
         return id;
@@ -21,12 +22,12 @@ public class GenreDto implements Genre {
 
     @Override
     public String getdescription() {
-        return description;
+        return name ;
     }
 
     @Override
     public void setdescription(String description) {
-        this.description = description;
+        this.name  = description;
     }
 
     @Override
@@ -47,5 +48,12 @@ public class GenreDto implements Genre {
     @Override
     public void setPendingBook(Set<PendingBook> pendingBook) {
 
+    }
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

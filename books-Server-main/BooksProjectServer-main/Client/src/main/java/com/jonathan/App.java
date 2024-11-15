@@ -107,18 +107,21 @@ public class App {
                 case "2" -> {
                     var courseId = readLine(in);
                     try {
-                        var client = restClient.get("/genre/" + courseId, GenreDto.class);
+                        var client = restClient.get("genre/" + courseId, GenreDto.class);
+                        System.out.println("id = " + client.getId());
+                        System.out.println("name = " + client.getdescription());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }
                 case "3" -> {
                     var course = new GenreDto();
-
+                    System.out.println("id del que quires actualitzar");
+                    var courseId = readLine(in);
+                    course.setid(Integer.parseInt(courseId));
                     course.setdescription(readLine(in));
-
                     try {
-                        restClient.post("/genre", Mappers.get().writeValueAsString(course));
+                        restClient.post("genre/", Mappers.get().writeValueAsString(course));
                     }catch (Exception e) {
                         throw new RuntimeException(e);
                     }

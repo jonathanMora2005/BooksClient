@@ -92,12 +92,11 @@ public class RequestRouterImpl implements RequestRouter {
             controller.post(publishingJson);
 
         } else if (method.equals("GET") && pathParts.length >= 2) {
+            System.out.println("pasar per aqui");
             responseJsonBody = controller.get(Integer.parseInt(pathParts[2]));
 
 
         }else if (method.equals("GET")) {
-            System.out.println("pasar per aqui");
-
             responseJsonBody = controller.get();
 
         } else if (method.equals("DELETE")) {

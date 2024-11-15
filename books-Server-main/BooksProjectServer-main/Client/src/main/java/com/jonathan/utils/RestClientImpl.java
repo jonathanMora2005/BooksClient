@@ -77,16 +77,35 @@ public class RestClientImpl implements RestClient {
             request.writeTo(socket.getOutputStream());
             System.out.println(request);
             T returnValue = null;
-            var response = rawHttp.parseResponse(socket.getInputStream()).eagerly();
-            System.out.println("respuets:"+ response);
-            System.out.println(response.getBody());
-            if (!returnType.isAssignableFrom(Void.class) && response.getBody().isPresent()) {
-                String responseBody = response.getBody().get().toString();
-                returnValue = Mappers.get().readValue(responseBody, returnType);
-            } else {
-                System.out.println("La respuesta no contiene un cuerpo JSON.");
-            }
+            System.out.println("1");
+            try {
+                var response = rawHttp.parseResponse(socket.getInputStream());
 
+                if (response != null) {
+                    System.out.println("Respuesta recibida: " + response);
+                    int statusCode = response.getStatusCode();
+                    System.out.println("Código de estado: " + statusCode);
+
+                    if (statusCode == 204) {
+                        System.out.println("La respuesta es 'No Content' (204). No hay cuerpo.");
+                        return null; // O maneja según corresponda
+                    }
+
+                    if (response.getBody().isPresent()) {
+                        String responseBody = response.getBody().get().toString();
+                        System.out.println("Cuerpo de la respuesta: " + responseBody);
+                        returnValue = Mappers.get().readValue(responseBody, returnType);
+                    } else {
+                        System.out.println("La respuesta no contiene cuerpo.");
+                    }
+                } else {
+                    System.out.println("No se recibió respuesta válida.");
+                }
+            } catch (Exception e) {
+                System.err.println("Error al procesar la respuesta: " + e.getMessage());
+                e.printStackTrace();
+                // Maneja el error de alguna manera, si es necesario.
+            }
 
             return returnValue;
         } catch (IOException e) {
