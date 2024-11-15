@@ -96,6 +96,8 @@ public class RequestRouterImpl implements RequestRouter {
 
 
         }else if (method.equals("GET")) {
+            System.out.println("pasar per aqui");
+
             responseJsonBody = controller.get();
 
         } else if (method.equals("DELETE")) {

@@ -99,7 +99,7 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var clients = restClient.getAll("/genre", GenreDto[].class);
+                        var clients = restClient.getAll("genre", GenreDto[].class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
