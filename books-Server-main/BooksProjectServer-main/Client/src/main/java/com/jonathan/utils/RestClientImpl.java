@@ -78,7 +78,8 @@ public class RestClientImpl implements RestClient {
 
             T returnValue = null;
             var response = rawHttp.parseResponse(socket.getInputStream()).eagerly();
-            System.out.println(response);
+            System.out.println("respuets:"+ response);
+
             if (!returnType.isAssignableFrom(Void.class) && response.getBody().isPresent() && response.getBody().get().toString().trim().length() > 0) {
                 String responseBody = response.getBody().get().toString();
                 returnValue = Mappers.get().readValue(responseBody, returnType);
