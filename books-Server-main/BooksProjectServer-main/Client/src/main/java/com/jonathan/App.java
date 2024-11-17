@@ -17,8 +17,6 @@ public class App {
     private static  final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private static  final PrintStream out = new PrintStream(System.out);
     private static RestClient restClient = new RestClientImpl("localhost", 3000);
-
-
     public static void main(String[] args) throws IOException {
         var command = "";
         do {
@@ -46,7 +44,7 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var books = restClient.getAll("/bookRead", BookReadDto[].class);
+                        var books = restClient.getAll("bookRead", BookReadDto[].class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -54,7 +52,7 @@ public class App {
                 case "2" -> {
                     var bookId = readLine(in);
                     try {
-                        var book = restClient.get("/bookRead/" + bookId, BookReadDto.class);
+                        var book = restClient.get("bookRead/" + bookId, BookReadDto.class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -72,7 +70,7 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var personalInfos = restClient.getAll("/personalInformation", PersonalInformationDto[].class);
+                        var personalInfos = restClient.getAll("personalInformation", PersonalInformationDto[].class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -80,10 +78,25 @@ public class App {
                 case "2" -> {
                     var infoId = readLine(in);
                     try {
-                        var personalInfo = restClient.get("/personalInformation/" + infoId, PersonalInformationDto.class);
+                        var personalInfo = restClient.get("personalInformation/" + infoId, PersonalInformationDto.class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
+                }
+                case "3" -> {
+                    var course = new AuthorDto();
+                    System.out.println("pon el nom del que quieras añadir");
+                    course.setName(readLine(in));
+
+                    System.out.println("pon el cognom del que quieras añadir");
+                    course.setsurname(readLine(in));
+
+                    try {
+                        restClient.post("genre/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
 
             }
@@ -100,6 +113,17 @@ public class App {
                 case "1" -> {
                     try {
                         var clients = restClient.getAll("genre", GenreDto[].class);
+                        System.out.println("+----+----------------------+");
+                        System.out.println("| ID | Nombre               |");
+                        System.out.println("+----+----------------------+");
+
+                        // Filas de la tabla
+                        for (GenreDto genre : clients) {
+                            System.out.printf("| %-2d | %-20s |%n", genre.getId(), genre.getName());
+                            System.out.println("+----+----------------------+");
+
+                        }
+
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -116,9 +140,8 @@ public class App {
                 }
                 case "3" -> {
                     var course = new GenreDto();
-                    System.out.println("id del que quires actualitzar");
-                    var courseId = readLine(in);
-                    course.setid(Integer.parseInt(courseId));
+                    System.out.println("pon la descripcion del que quieras añadir");
+
                     course.setdescription(readLine(in));
                     try {
                         restClient.post("genre/", Mappers.get().writeValueAsString(course));
@@ -127,6 +150,35 @@ public class App {
                     }
 
                 }
+                case "4" -> {
+                    var course = new GenreDto();
+                    System.out.println("pon el id del que quieras actualitzar");
+                    course.setid(Integer.parseInt(readLine(in)));
+
+                    System.out.println("pon la nueva descripcion");
+
+                    course.setdescription(readLine(in));
+                    try {
+                        restClient.put("genre/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                case "5" -> {
+                    var course = new GenreDto();
+                    System.out.println("pon el id del que quieras eliminar");
+                    course.setid(Integer.parseInt(readLine(in)));
+
+                    try {
+                        restClient.delete("genre/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+
+
             }
 
         } while (!command.equals("exit"));
@@ -136,10 +188,9 @@ public class App {
         out.println("Genre Management System:");
         out.println("1. Show all Genre");
         out.println("2. Get");
-        out.println("3. Update an Genre");
-        out.println("4. Insert a new Genre");
-
-        out.println("6. delete");
+        out.println("3. Insert a Genre");
+        out.println("4. update a  Genre");
+        out.println("5. delete");
     }
     private static String readLine(BufferedReader in) {
         String command;
@@ -159,7 +210,7 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var books = restClient.getAll("/bookPending", BookPendingDto[].class);
+                        var books = restClient.getAll("bookPending", BookPendingDto[].class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -167,7 +218,7 @@ public class App {
                 case "2" -> {
                     var bookId = readLine(in);
                     try {
-                        var book = restClient.get("/bookPending/" + bookId, BookPendingDto.class);
+                        var book = restClient.get("bookPending/" + bookId, BookPendingDto.class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -195,7 +246,7 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var publishings = restClient.getAll("/publishing", PublishingDto[].class);
+                        var publishings = restClient.getAll("publishing", PublishingDto[].class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -203,7 +254,7 @@ public class App {
                 case "2" -> {
                     var publishingId = readLine(in);
                     try {
-                        var publishing = restClient.get("/publishing/" + publishingId, PublishingDto.class);
+                        var publishing = restClient.get("publishing/" + publishingId, PublishingDto.class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -221,7 +272,18 @@ public class App {
             switch (command) {
                 case "1" -> {
                     try {
-                        var authors = restClient.getAll("/author", AuthorDto[].class);
+                        var authors = restClient.getAll("author", AuthorDto[].class);
+                        System.out.println("+----+----------------+--------------------+");
+                        System.out.println("| ID | Nombre         | Apellido           |");
+                        System.out.println("+----+----------------+--------------------+");
+
+                        // Filas de la tabla
+                        for (AuthorDto author : authors) {
+                            System.out.printf("| %-2d | %-14s | %-18s |%n",
+                                    author.getId(), author.getnom(), author.getsurname());
+                            System.out.println("+----+----------------+--------------------+");
+
+                        }
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -229,7 +291,7 @@ public class App {
                 case "2" -> {
                     var authorId = readLine(in);
                     try {
-                        var author = restClient.get("/author/" + authorId, AuthorDto.class);
+                        var author = restClient.get("author/" + authorId, AuthorDto.class);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -243,7 +305,6 @@ public class App {
         out.println("1. Show all Authors");
         out.println("2. Get an Author");
         out.println("3. Create a new Author");
-        out.println("4. Exit");
     }
     private static void showPublishingMenu() {
         out.println("Publishing Management System:");

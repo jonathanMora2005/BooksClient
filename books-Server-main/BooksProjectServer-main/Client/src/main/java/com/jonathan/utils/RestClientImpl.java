@@ -25,7 +25,7 @@ public class RestClientImpl implements RestClient {
 
     @Override
     public <T> T[] getAll(String path, Class<T[]> returnType) throws Exception {
-        return execRequest("GET", path+"/0", null, returnType);
+        return execRequest("GET", path + "/0", null, returnType);
     }
 
     @Override
@@ -37,79 +37,60 @@ public class RestClientImpl implements RestClient {
     public void put(String path, String body) throws Exception {
         execRequest("PUT", path, body, Void.class);
     }
+
     @Override
     public void delete(String path, String body) throws Exception {
         execRequest("DELETE", path, body, Void.class);
     }
 
-    protected <T> T execRequest(String method, String path, String body, Class<T> returnType) throws  Exception {
+    protected <T> T execRequest(String method, String path, String body, Class<T> returnType) throws Exception {
         var rawHttp = new RawHttp();
-        try (var socket = new Socket(host, port)) {
-           /* var request = new RawHttpRequest(
-                    new RequestLine(
-                            "GET",
-                            new URI(String.format("http://%s:%d/%s", host, port, path)),
-                            HttpVersion.HTTP_1_1
-                    ),
-                    RawHttpHeaders.newBuilder()
-                            .with("User-Agent", "RestClient/1.0")
-                            .with("Host", host)
-                            .build(),
-                    null,
-                    InetAddress.getByName(host)
-            );*/
 
+        // Initialize socket and ensure it's closed after use
+        try (var socket = new Socket(host, port)) {
             if (body == null) {
                 body = "";
             }
 
+            // Create and write the HTTP request
             var request = rawHttp.parseRequest(
                     method + " " + String.format("http://%s:%d/%s", host, port, path) + " HTTP/1.1\r\n" +
                             "Host: " + host + "\r\n" +
                             "User-Agent: RawHTTP\r\n" +
-                            "Content-Length: " + body.length()+ "\r\n" +
+                            "Content-Length: " + body.length() + "\r\n" +
                             "Content-Type: application/json\r\n" +
                             "Accept: application/json\r\n" +
                             "\r\n" +
                             body
             );
 
+            // Send request
             request.writeTo(socket.getOutputStream());
-            System.out.println(request);
-            T returnValue = null;
-            System.out.println("1");
+
+            // Parse the response
             try {
-                var response = rawHttp.parseResponse(socket.getInputStream());
-
-                if (response != null) {
-                    System.out.println("Respuesta recibida: " + response);
-                    int statusCode = response.getStatusCode();
-                    System.out.println("Código de estado: " + statusCode);
-
-                    if (statusCode == 204) {
-                        System.out.println("La respuesta es 'No Content' (204). No hay cuerpo.");
-                        return null; // O maneja según corresponda
+                var response = rawHttp.parseResponse(socket.getInputStream()).eagerly();
+                // Check for response body and deserialize if necessary
+                if (response.getBody().isPresent()) {
+                    String responseBody = new String(response.getBody().get().asRawBytes());
+                    System.out.println(responseBody);
+                    try {
+                        return Mappers.get().readValue(responseBody, returnType);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error al deserializar la respuesta: " + responseBody, e);
                     }
-
-                    if (response.getBody().isPresent()) {
-                        String responseBody = response.getBody().get().toString();
-                        System.out.println("Cuerpo de la respuesta: " + responseBody);
-                        returnValue = Mappers.get().readValue(responseBody, returnType);
-                    } else {
-                        System.out.println("La respuesta no contiene cuerpo.");
-                    }
-                } else {
-                    System.out.println("No se recibió respuesta válida.");
                 }
             } catch (Exception e) {
-                System.err.println("Error al procesar la respuesta: " + e.getMessage());
+                System.err.println("Ocurrió un error procesando la respuesta: " + e.getMessage());
                 e.printStackTrace();
-                // Maneja el error de alguna manera, si es necesario.
+                return null;
             }
 
-            return returnValue;
+            // Return null for Void type
+            return null;
         } catch (IOException e) {
-            throw new Exception(e);
+            // Log or wrap the exception with additional context
+            throw new RuntimeException("Error executing HTTP request: " + method + " " + path);
         }
     }
 }

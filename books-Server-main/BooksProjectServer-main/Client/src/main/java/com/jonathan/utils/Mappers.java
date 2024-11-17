@@ -3,8 +3,8 @@ package com.jonathan.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.jonathan.dto.GenreDto;
-import com.jonathan.mybooklist.models.Genre;
+import com.jonathan.dto.*;
+import com.jonathan.mybooklist.models.*;
 
 public class Mappers {
     private static final ObjectMapper mapper;
@@ -16,10 +16,23 @@ public class Mappers {
                 .registerModule(
                         new SimpleModule()
                                 .addAbstractTypeMapping(Genre.class, GenreDto.class)
+                                .addAbstractTypeMapping(Author.class, AuthorDto.class)
+                                .addAbstractTypeMapping(Publishing.class, PublishingDto.class)
+                                .addAbstractTypeMapping(PersonalInformation.class, PersonalInformationDto.class)
+                                .addAbstractTypeMapping(ReadBook.class, BookReadDto.class)
+                                .addAbstractTypeMapping(PendingBook.class, BookPendingDto.class)
                 )
                 .registerModule(
                         new SimpleModule()
                                 .addAbstractTypeMapping(Genre.class, GenreDto.class)
+                                .addAbstractTypeMapping(Author.class, AuthorDto.class)
+                                .addAbstractTypeMapping(Publishing.class, PublishingDto.class)
+                                .addAbstractTypeMapping(PersonalInformation.class, PersonalInformationDto.class)
+                                .addAbstractTypeMapping(ReadBook.class, BookReadDto.class)
+                                .addAbstractTypeMapping(PendingBook.class, BookPendingDto.class)
+
+
+
                 ); // Registered to map the Genre deserialization
     }
 

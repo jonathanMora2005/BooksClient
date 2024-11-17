@@ -6,6 +6,13 @@ public class AuthorDto implements Author {
     private int id;
     private String nom;
     private String suname;
+    public String getName() {
+        return nom;
+    }
+
+    public void setName(String name) {
+        this.nom = name;
+    }
     @Override
     public int getId() {
         return id;

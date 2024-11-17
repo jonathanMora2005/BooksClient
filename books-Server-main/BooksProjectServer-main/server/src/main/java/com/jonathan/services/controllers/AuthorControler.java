@@ -28,33 +28,42 @@ public class AuthorControler implements Controller{
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("{")
                 .append("\"id\":").append(genre.getId()).append(",")
-                .append("\"name\":\"").append(genre.getnom()).append("\"")
+                .append("\"name\":\"").append(genre.getnom()).append("\",")
                 .append("\"surname\":\"").append(genre.getsurname()).append("\"")
                 .append("}");
         return jsonBuilder.toString();
     }
+
 
     @Override
     public String get() {
         Set<Author> genres = repositoryFactory.getAuthorRepository().getAll();
         StringBuilder jsonBuilder = new StringBuilder();
         jsonBuilder.append("[");
-        int count = 0;
-        int size = genres.size();
+
+        int count = 0; // Contador para saber la posición actual
+        int size = genres.size(); // Tamaño total del conjunto de autores
 
         for (Author genre : genres) {
             jsonBuilder.append("{")
                     .append("\"id\":").append(genre.getId()).append(",")
-                    .append("\"name\":\"").append(genre.getnom()).append("\"")
-                    .append("\"surname\":\"").append(genre.getsurname()).append("\"");
+                    .append("\"name\":\"").append(genre.getnom()).append("\",")
+                    .append("\"surname\":\"").append(genre.getsurname()).append("\"")
+                    .append("}"); // Cierra el objeto JSON.
 
-            if (++count < size) {
+            // Solo añade una coma si NO es el último objeto.
+            if (count < size - 1) {
                 jsonBuilder.append(",");
             }
+
+            count++;
         }
+
         jsonBuilder.append("]");
         return jsonBuilder.toString();
     }
+
+
 
     @Override
     public void post(String value) {
