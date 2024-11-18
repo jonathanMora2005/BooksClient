@@ -296,6 +296,49 @@ public class App {
                         throw new RuntimeException(e);
                     }
                 }
+                case "3" -> {
+                    var course = new AuthorDto();
+                    System.out.println("pon la nombre del que quieras añadir");
+                    course.setName(readLine(in));
+                    System.out.println("pon la surname del que quieras añadir");
+
+                    course.setsurname(readLine(in));
+                    try {
+                        restClient.post("author/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                case "4" -> {
+                    var course = new AuthorDto();
+                    System.out.println("pon el id del que quieras modificar");
+                    course.setId(Integer.parseInt(readLine(in)));
+                    System.out.println("pon el nuevo nombre");
+                    course.setName(readLine(in));
+                    System.out.println("pon el nuevo surname");
+
+                    course.setsurname(readLine(in));
+                    try {
+                        restClient.put("author/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                case "5" -> {
+                    var course = new AuthorDto();
+                    System.out.println("pon el id del que quieras eliminar");
+                    course.setId(Integer.parseInt(readLine(in)));
+
+
+                    try {
+                        restClient.delete("author/", Mappers.get().writeValueAsString(course));
+                    }catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
 
             }
         } while (!command.equals("exit"));
@@ -311,7 +354,8 @@ public class App {
         out.println("1. Show all Publishing");
         out.println("2. Get a Publishing");
         out.println("3. Create a new Publishing");
-        out.println("4. Exit");
+        out.println("4. update a  Publishing");
+        out.println("5. delete a  Publishing");
     }
 
     private static void showPersonalInformationMenu() {

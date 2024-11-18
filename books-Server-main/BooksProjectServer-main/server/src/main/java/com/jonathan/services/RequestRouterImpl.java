@@ -280,9 +280,9 @@ public class RequestRouterImpl implements RequestRouter {
 
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(jsonBody);
-            String nombre = jsonNode.get("nombre").asText();
+            String nombre = jsonNode.get("description").asText();
             System.out.println(nombre);
-
+            System.out.println("hola");
             controller.post(nombre);
 
         } else if (method.equals("GET") && Integer.parseInt(pathParts[2]) != 0) {
